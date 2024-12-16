@@ -2,7 +2,6 @@ importlib_metadata==7.1.0
 Markdown==3.6
 mediaconch==22.3
 packaging==24.0
-pkg_resources==0.0.0
 psutil==6.1.0
 pymediainfo==6.0.1
 PyQt5==5.15.10
