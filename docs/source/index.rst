@@ -50,6 +50,7 @@ Index
 
 .. toctree::
    quickstart
+   gui_breakdown
    functions
    contact
 
