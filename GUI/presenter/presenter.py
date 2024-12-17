@@ -82,21 +82,22 @@ class Presenter:
         self.folder_table.delete_row_by_name(file_path)
 
     def run_backend(self):
-        self.view.run_button.setEnabled(False)
-        self.view.cancel_button.setEnabled(True)
+        if self.view.check_valid_output_folder(self.view.get_output_folder()):
+            self.view.run_button.setEnabled(False)
+            self.view.cancel_button.setEnabled(True)
 
-        if not os.path.exists(self.model.backend_config_folder):
-            self.model.create_config_folder()
-        else:
-            self.model.clean_config_folder()
-        self.create_config_files()
-        if self.driver_config_file is not None:
-            self.log_files = self.model.run()
-            for seq_name, log_files in self.log_files.items():
-                debug_log_file = log_files[0]
-                info_log_file = log_files[1]
-                self.start_log_widget(seq_name, info_log_file)
-                self.start_progress_bar_widget(seq_name, debug_log_file)
+            if not os.path.exists(self.model.backend_config_folder):
+                self.model.create_config_folder()
+            else:
+                self.model.clean_config_folder()
+            self.create_config_files()
+            if self.driver_config_file is not None:
+                self.log_files = self.model.run()
+                for seq_name, log_files in self.log_files.items():
+                    debug_log_file = log_files[0]
+                    info_log_file = log_files[1]
+                    self.start_log_widget(seq_name, info_log_file)
+                    self.start_progress_bar_widget(seq_name, debug_log_file)
 
     def cancel_backend(self):
         log_file_info = ""

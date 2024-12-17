@@ -199,12 +199,24 @@ class Model:
             os.mkdir(self.backend_config_folder)
 
     def cancel(self):
+        # Terminate the specific process if it exists
         if self.process:
             self.process.terminate()
-        try:
-            self.process.wait(timeout=5)  # Wait for process to exit
-        except subprocess.TimeoutExpired:
-            print("Force killing backend process...")
-            self.process.kill()  # Force kill if not terminated
+            try:
+                self.process.wait(timeout=5)  # Wait for process to exit
+            except subprocess.TimeoutExpired:
+                print("Force killing backend process...")
+                self.process.kill()  # Force kill if not terminated
+
+        # Kill processes with 'driver.py' in the command line
+        for proc in psutil.process_iter():  # Iterate through all processes
+            try:
+                cmdline = proc.cmdline()  # Fetch the command-line arguments
+                if cmdline and any("driver.py" in arg for arg in cmdline):
+                    print(f"Killing process {proc.pid} with command line: {cmdline}")
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                # Ignore processes that no longer exist or cannot be accessed
+                pass
         else:
             print("No backend process is running.")
