@@ -1,4 +1,3 @@
-importlib_metadata==7.1.0
 Markdown==3.6
 mediaconch==22.3
 packaging==24.0
