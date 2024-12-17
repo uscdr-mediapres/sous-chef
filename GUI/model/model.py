@@ -19,6 +19,7 @@ class Model:
         self.num_sequences = 0
         self.license = ""
         self.cpu_cores = os.cpu_count()
+        self.process = None
 
     def config_exists(self) -> bool:
         return self.app_config_path.exists()
@@ -175,7 +176,6 @@ class Model:
         """ """
         with open(self.log_config_file, "r") as json_file:
             log_configs = json.load(json_file)
-        print(type(log_configs["workers"]))
         seq_log_map = {}
         for worker_num, worker_log_files in log_configs["workers"].items():
             seq_name = self.get_sequence_name(worker_num)
@@ -187,8 +187,8 @@ class Model:
     def run(self):
         """ """
         driver_script = self.project_root / "scripts" / "driver.py"
-        subprocess.Popen(['python', driver_script, '--config', f'{self.backend_config_folder}'],
-                         stdout=subprocess.PIPE, text=True)
+        self.process = subprocess.Popen(['python', driver_script, '--config', f'{self.backend_config_folder}'],
+                                        stdout=subprocess.PIPE, text=True)
         while not os.path.exists(self.log_config_file):
             print("Waiting for logs")
             time.sleep(1)
@@ -197,3 +197,14 @@ class Model:
     def create_config_folder(self):
         if not os.path.exists(self.backend_config_folder):
             os.mkdir(self.backend_config_folder)
+
+    def cancel(self):
+        if self.process:
+            self.process.terminate()
+        try:
+            self.process.wait(timeout=5)  # Wait for process to exit
+        except subprocess.TimeoutExpired:
+            print("Force killing backend process...")
+            self.process.kill()  # Force kill if not terminated
+        else:
+            print("No backend process is running.")

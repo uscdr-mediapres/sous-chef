@@ -1,5 +1,8 @@
 import re
 import os
+
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from scripts.utils import read_new_content
 
 
@@ -103,14 +106,24 @@ def get_section_status(section):
     return status.get(section, section)
 
 
-class ProgressBarModel:
+class ProgressBarModel(QObject):
+    progress_error = pyqtSignal(str, int)
+
     def __init__(self, filepath):
+        super().__init__()
         self.component = {}
         self.filepath = filepath
         self.progress_value = 0.0  # Initialize dummy progress value at 0.0
         self.file = None
         self.file_position = 0  # Keep track of the current read position in the file
-        self.open_file()
+        try:
+            self.open_file()
+        except FileNotFoundError:
+            error_message = f"Error: File '{self.filepath}' not found."
+            self.progress_error.emit(error_message, 100)  # Emit the error signal
+        except Exception as e:
+            error_message = f"Unexpected error: {str(e)}"
+            self.progress_error.emit(error_message, 100)
         self.total_frames = 0
 
     def open_file(self, start_from_end=False):
@@ -125,6 +138,10 @@ class ProgressBarModel:
 
     def read_new_content(self):
         """Reads new lines from the log file using the utility function."""
+        if not self.file:
+            self.progress_error.emit("Error: Debug Log File Not Found", 100)
+            return ""
+
         new_content, self.file_position = read_new_content(self.file, self.file_position)
         return new_content
 
@@ -143,7 +160,7 @@ class ProgressBarModel:
             if component["level"] == "DEBUG" and component["function"] in ("run_rawcooked", "check_v2"):
                 name, value = parse_debug(component["message"]["DEBUG"])
                 if name == "Processing Frames":
-                    value = int(value)/self.total_frames * 100
+                    value = int(value) / self.total_frames * 100
                 report["progress"]["name"] = name
                 report["progress"]["value"] = value
         except Exception as e:
@@ -200,7 +217,6 @@ class ProgressBarModel:
         else:
             self.component = self.read_component(line, report=self.component["report"])
         if self.component["level"] == "ERROR":
-            print("here error")
             return {"section": "ERROR", "progress": {"name": "Failed", "value": 0}}
         elif self.component["level"] == "FINISHED_PROCESSING":
             return {"section": "COMPLETED", "progress": {"name": "Success", "value": 100}}

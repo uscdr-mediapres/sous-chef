@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QMainWindow, QToolBar, QAction, QVBoxLayout, QLabel, QDesktopWidget, QWidget, QStatusBar, QPushButton,
@@ -64,6 +67,8 @@ class View(QMainWindow):
         self.output_folder_label.setText(self.empty_output_folder_text)
 
         self.run_button = QPushButton("Run")
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.setEnabled(False)
 
         self.buttons_widget = None
 
@@ -131,6 +136,7 @@ class View(QMainWindow):
         spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         right_layout.addItem(spacer)
         right_layout.addWidget(self.run_button)
+        right_layout.addWidget(self.cancel_button)
 
         button_layout = QHBoxLayout()
         button_layout.setContentsMargins(0, 0, 0, 0)
@@ -183,6 +189,22 @@ class View(QMainWindow):
     def select_output_folder(self):
         self.output_folder = QFileDialog.getExistingDirectory(self, "Select Output Folder")
         if self.output_folder:
+            working_dir = os.path.join(self.output_folder, "working_directory")
+            if os.path.exists(working_dir):
+                reply = QMessageBox.question(
+                    self,
+                    "Confirm Deletion",
+                    f"'{working_dir}' already exists in the selected output folder. Do you want to delete it?",
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No,
+                )
+                if reply == QMessageBox.Yes:
+                    try:
+                        shutil.rmtree(working_dir)
+                    except Exception as e:
+                        QMessageBox.critical(self, "Error", f"Failed to delete '{working_dir}': {str(e)}")
+                else:
+                    return  # Exit without setting the folder
             self.output_folder_label.setText("Output Folder: " + self.output_folder)
 
     def add_connections(self):
@@ -207,3 +229,13 @@ class View(QMainWindow):
             msg_box.exec_()
             return ""
         return self.output_folder
+
+    def show_cancel_dialog(self, log_files):
+        dialog = QMessageBox(self)
+        dialog.setWindowTitle("Cancel")
+        dialog.setText(f"Are you sure you want to cancel?\nCancelling this run will stop any unfinished sequences. \n"
+                       f"Logs Information:\n{log_files}\nNOTE: Move unfinished sequences present in \n"
+                       f"{self.output_folder}/working directory \nback to source before starting a new run")
+        dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        response = dialog.exec_()
+        return response == QMessageBox.Yes
