@@ -13,6 +13,7 @@ from GUI.view.preferences_dialog import PreferencesDialog
 
 class Presenter:
     def __init__(self, model, view):
+        self.log_files = None
         self.driver_config_file = None
         self.preferences_window = None
         self.about_window = None
@@ -30,6 +31,7 @@ class Presenter:
         self.progress_presenters = []
         self.preferences_presenter = None
         self.view.run_button.clicked.connect(lambda: self.run_backend())
+        self.view.cancel_button.clicked.connect(lambda: self.cancel_backend())
 
     def on_toolbar_action(self, action):
         self.license_version = self.model.get_license_config()
@@ -60,16 +62,16 @@ class Presenter:
                 self.model.create_worker_config(row_index, row_data)
 
     def start_log_widget(self, seq_file_name, log_file_name):
-        log_model = LogModel(log_file_name)
         log_view = LogWidget(seq_file_name)
+        log_model = LogModel(log_file_name)
         log_presenter = LogPresenter(log_model, log_view)
         self.log_presenters.append(log_presenter)
         self.view.log_layout.addWidget(log_view)
         log_presenter.start_tailing_log()
 
     def start_progress_bar_widget(self, seq_file_name, log_file_name):
-        progress_model = ProgressBarModel(log_file_name)
         progress_view = ProgressBarView(seq_file_name)
+        progress_model = ProgressBarModel(log_file_name)
         progress_presenter = ProgressPresenter(progress_model, progress_view)
         self.progress_presenters.append(progress_presenter)
         self.view.progress_layout.addWidget(progress_view)
@@ -80,15 +82,44 @@ class Presenter:
         self.folder_table.delete_row_by_name(file_path)
 
     def run_backend(self):
+        self.view.run_button.setEnabled(False)
+        self.view.cancel_button.setEnabled(True)
+
         if not os.path.exists(self.model.backend_config_folder):
             self.model.create_config_folder()
         else:
             self.model.clean_config_folder()
         self.create_config_files()
         if self.driver_config_file is not None:
-            log_files = self.model.run()
-            for seq_name, log_files in log_files.items():
+            self.log_files = self.model.run()
+            for seq_name, log_files in self.log_files.items():
                 debug_log_file = log_files[0]
                 info_log_file = log_files[1]
                 self.start_log_widget(seq_name, info_log_file)
                 self.start_progress_bar_widget(seq_name, debug_log_file)
+
+    def cancel_backend(self):
+        log_file_info = ""
+        for seq_name, log_files in self.log_files.items():
+            log_file_info += seq_name + ": " + log_files[0] + "\n"
+
+        if self.view.show_cancel_dialog(log_file_info):
+            for log_presenter in self.log_presenters:
+                log_presenter.update_log("Process Cancelled by User")
+                log_presenter.stop_tailing()
+
+            for progress_bar_presenter in self.progress_presenters:
+                progress_bar_presenter.update_ui_with_data("Process Cancelled by User")
+                progress_bar_presenter.stop_tailing()
+
+            self.model.cancel()
+
+            self.view.cancel_button.setEnabled(False)
+            self.view.run_button.setEnabled(True)
+
+
+
+
+
+
+

@@ -8,6 +8,7 @@ class ProgressPresenter(QObject):
         super().__init__()
         self.model = model
         self.view = view
+        model.progress_error.connect(view.update_progress_bar)
         self.file_watcher = QFileSystemWatcher()  # Watches for file changes
         self.timer = QTimer()  # Fallback timer for polling
         self.timer.timeout.connect(self.update_progress)
@@ -20,21 +21,31 @@ class ProgressPresenter(QObject):
         if file_path:
             self.file_watcher.addPath(file_path)
         # Start fetching initial data to prime the progress bar
-        self._update_ui_with_data()
+        self.update_ui_with_data()
 
         # Start the fallback timer
         self.timer.start(1000)  # Poll every 100 ms
 
     def update_progress(self):
         """Fetch new data and update the progress bar and section label."""
-        self._update_ui_with_data()
+        self.update_ui_with_data()
+
+    def cancel_progress(self):
+        """Fetch new data and update the progress bar and section label."""
+        self.update_ui_with_data()
 
     def file_changed(self, path):
         """Handles the event when the log file is modified externally."""
         # Fetch and process new data when the file changes
-        self._update_ui_with_data()
+        self.update_ui_with_data()
 
-    def _update_ui_with_data(self):
+    def update_ui_with_data(self, cancel_str=""):
+        if cancel_str != "":
+            self.view.section_label.setText("CANCELLED")
+            self.view.update_progress_bar("Process Cancelled", 100)
+            self.timer.stop()
+            return
+
         """Updates the UI components with new data."""
         raw_content = self.model.read_new_content()
         for line in raw_content.splitlines():

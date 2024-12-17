@@ -35,7 +35,7 @@ class ProgressBarView(QWidget):
 
     def update_progress_bar(self, progress_name, value):
         """Updates the progress bar format and value."""
-        if "Error" in progress_name:
+        if "Error" in progress_name or "Cancel" in progress_name:
             self.progress_bar.setProperty("class", "error")
             self.style().polish(self.progress_bar)
             self.progress_bar.setFormat(f"{progress_name}")
