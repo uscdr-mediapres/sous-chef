@@ -186,26 +186,32 @@ class View(QMainWindow):
             self.folder_policy_details.emit()
             self.folder_table.add_folder_to_table(folder)
 
+    def check_valid_output_folder(self, folder):
+        working_dir = os.path.join(folder, "working_directory")
+        if os.path.exists(working_dir):
+            reply = QMessageBox.question(
+                self,
+                "Confirm Deletion",
+                f"'{working_dir}' already exists in the selected output folder. Do you want to delete it?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+            if reply == QMessageBox.Yes:
+                try:
+                    shutil.rmtree(working_dir)
+                except Exception as e:
+                    QMessageBox.critical(self, "Error", f"Failed to delete '{working_dir}': {str(e)}")
+                    return False
+            else:
+                return False  # User chose not to delete, so folder is not usable
+        return True
+
     def select_output_folder(self):
-        self.output_folder = QFileDialog.getExistingDirectory(self, "Select Output Folder")
-        if self.output_folder:
-            working_dir = os.path.join(self.output_folder, "working_directory")
-            if os.path.exists(working_dir):
-                reply = QMessageBox.question(
-                    self,
-                    "Confirm Deletion",
-                    f"'{working_dir}' already exists in the selected output folder. Do you want to delete it?",
-                    QMessageBox.Yes | QMessageBox.No,
-                    QMessageBox.No,
-                )
-                if reply == QMessageBox.Yes:
-                    try:
-                        shutil.rmtree(working_dir)
-                    except Exception as e:
-                        QMessageBox.critical(self, "Error", f"Failed to delete '{working_dir}': {str(e)}")
-                else:
-                    return  # Exit without setting the folder
-            self.output_folder_label.setText("Output Folder: " + self.output_folder)
+        folder = QFileDialog.getExistingDirectory(self, "Select Output Folder")
+        if folder:
+            if self.check_valid_output_folder(folder):
+                self.output_folder = folder
+                self.output_folder_label.setText("Output Folder: " + self.output_folder)
 
     def add_connections(self):
         self.folder_button.clicked.connect(self.select_folders)
