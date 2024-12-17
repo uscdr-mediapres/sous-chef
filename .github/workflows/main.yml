@@ -15,7 +15,7 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -36,7 +36,7 @@ jobs:
         pyinstaller --onefile --add-data "GUI/:GUI/" --add-data "scripts/:scripts/" app.py
 
     - name: Upload the executable as an artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: SousChef
         path: dist/app  # Path to the generated executable in the dist folder
