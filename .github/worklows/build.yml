@@ -1,0 +1,44 @@
+name: Build Executable with PyInstaller
+
+# Trigger the workflow on push to main or a pull request
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # or 'windows-latest' if you need a Windows executable
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'  # Specify the Python version to use
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Ensure all dependencies are listed in requirements.txt
+
+    - name: Install PyInstaller
+      run: |
+        pip install pyinstaller
+
+    - name: Build the executable with PyInstaller
+      run: |
+        pyinstaller --onefile --add-data "GUI/:GUI/" --add-data "scripts/:scripts/" app.py
+
+    - name: Upload the executable as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: SousChef
+        path: dist/app  # Path to the generated executable in the dist folder
+
+
