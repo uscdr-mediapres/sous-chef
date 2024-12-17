@@ -13,6 +13,8 @@ parent_directory = os.path.dirname(os.path.dirname(os.path.dirname(current_direc
 scripts_directory = os.path.join(parent_directory, "scripts")
 gui_directory = os.path.join(parent_directory, "GUI")
 sys.path.insert(0, scripts_directory)
+sys.path.insert(0, gui_directory)
+
 project = "USC-DR-RAWCOOKED"
 copyright = "2024, Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
 author = "Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
