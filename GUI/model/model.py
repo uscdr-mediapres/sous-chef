@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 import time
-
+import venv
 import psutil
 
 
@@ -260,7 +260,7 @@ class Model:
         """
         driver_script = self.project_root / "scripts" / "driver.py"
         self.process = subprocess.Popen(
-            ['python', driver_script, '--config', f'{self.backend_config_folder}'],
+            ['/bin/python3', driver_script, '--config', f'{self.backend_config_folder}'],
             stdout=subprocess.PIPE, text=True
         )
         while not os.path.exists(self.log_config_file):
