@@ -2,7 +2,7 @@ import re
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
-def read_new_content(file, file_position):
+def tail_new_content(file, file_position):
     """
     Reads new lines from the file since the last read position.
 
@@ -160,7 +160,8 @@ class ProgressBarModel(QObject):
             self.progress_error.emit("Error: Debug Log File Not Found", 100)
             return ""
 
-        return read_new_content(self.file, self.file_position)
+        new_content, self.file_position = tail_new_content(self.file, self.file_position)
+        return new_content
 
     def close_file(self):
         """

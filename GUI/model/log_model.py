@@ -1,7 +1,8 @@
 import os
 from PyQt5.QtCore import QObject, pyqtSignal
 
-def read_new_content(file, file_position):
+
+def tail_new_content(file, file_position):
     """Reads new lines from the file since the last read position."""
     if not file:
         return "", file_position
@@ -10,6 +11,7 @@ def read_new_content(file, file_position):
     new_content = file.read()  # Read any new content
     file_position = file.tell()  # Update position for the next read
     return new_content, file_position
+
 
 class LogModel(QObject):
     """
@@ -116,7 +118,7 @@ class LogModel(QObject):
             self.log_error.emit("Error: Info Log File Not Found\n")
             return ""
 
-        new_content, self.file_position = read_new_content(self.file, self.file_position)
+        new_content, self.file_position = tail_new_content(self.file, self.file_position)
         return new_content
 
     def close(self):
