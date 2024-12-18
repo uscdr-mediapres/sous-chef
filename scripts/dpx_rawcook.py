@@ -72,7 +72,7 @@ def run_rawcooked(
     try:
         # generate run command
         string_command: str = (
-                f"rawcooked " + ["", f"--license {rc_license}"][rc_license is not None] +
+                f"rawcooked " + ["", f"--license {rc_license} "][rc_license is not None] +
                 f"-y --all --no-accept-gaps {'--output-version 2' if v2_flag else ''} "
                 f"-s 5281680 {'--framemd5' if frame_md5 else ''} "
                 f"{sequence_path} -o {mkv_path}"
