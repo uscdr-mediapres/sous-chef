@@ -40,11 +40,11 @@ def grep_with_redirect(pattern: str, source: Path, destination: Path) -> None:
 
 
 def run_rawcooked(
-    sequence_path: Path,
-    output_path: Path,
-    v2_flag: bool,
-    frame_md5: bool,
-    rc_license: str,
+        sequence_path: Path,
+        output_path: Path,
+        v2_flag: bool,
+        frame_md5: bool,
+        rc_license: str,
 ) -> Path:
     """
     Runs the rawcooked command for the sequence using the preferences specified by the user. After the rawcooked subprocess,
@@ -72,10 +72,10 @@ def run_rawcooked(
     try:
         # generate run command
         string_command: str = (
-            f"rawcooked --license {rc_license} "
-            f"-y --all --no-accept-gaps {'--output-version 2' if v2_flag else ''} "
-            f"-s 5281680 {'--framemd5' if frame_md5 else ''} "
-            f"{sequence_path} -o {mkv_path}"
+                f"rawcooked" + ["", f"--license {rc_license}"][rc_license is not None] +
+                f"-y --all --no-accept-gaps {'--output-version 2' if v2_flag else ''} "
+                f"-s 5281680 {'--framemd5' if frame_md5 else ''} "
+                f"{sequence_path} -o {mkv_path}"
         )
         worker.debug(f"{mkv_path=}")
         # worker.debug(f"{string_command=}")
@@ -87,7 +87,7 @@ def run_rawcooked(
         worker.info("calling rawcook subprocess")
 
         with subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         ) as p:
             for line in p.stderr:
                 worker.debug(line)
