@@ -8,19 +8,23 @@ Model Class
 
 The `Model` class serves as the core component of the USC-DR-RAWCOOKED project. It provides functionalities for managing configurations, handling transcoding tasks, and interacting with system resources.
 
+```{eval-rst}
 .. autoclass:: model.model.Model
    :members:
    :undoc-members:
    :show-inheritance:
+```
 
 Class Overview
 --------------
 
 Here is a quick overview of the methods and special members defined in the `GUI.model.Model` class:
 
+```{eval-rst}
 .. autoclass:: model.model.Model
    :members:
    :undoc-members:
    :private-members:
    :special-members: __init__
    :show-inheritance:
+```
