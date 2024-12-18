@@ -33,12 +33,12 @@ jobs:
 
     - name: Build the executable with PyInstaller
       run: |
-        pyinstaller --onefile --add-data "GUI/:GUI/" --add-data "scripts/:scripts/" app.py
+        pyinstaller --onefile --add-data "GUI/:GUI/" --add-data "scripts/:scripts/" --name=SousChef --icon=souschef.png app.py
 
     - name: Upload the executable as an artifact
       uses: actions/upload-artifact@v4
       with:
         name: SousChef
-        path: dist/app # Path to the generated executable in the dist folder
+        path: dist/SousChef # Path to the generated executable in the dist folder
 
 
