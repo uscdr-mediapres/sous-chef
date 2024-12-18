@@ -199,11 +199,11 @@ def move_logs(wd: Path, output_path: Path, sequence_destination: Path) -> None:
 
 
 def write_log_config(
-    write_path: Path,
-    driver_path: Path,
-    final_path: Path,
-    count: int,
-    sequence_paths: List[Path],
+        write_path: Path,
+        driver_path: Path,
+        final_path: Path,
+        count: int,
+        sequence_paths: List[Path],
 ) -> None:
     """
     Creates a JSON file containing log paths to be read by the GUI.
@@ -447,6 +447,7 @@ def read_new_content(file, file_position):
     new_content = file.read()  # Read any new content
     file_position = file.tell()  # Update position for the next read
     return new_content, file_position
+
 
 if __name__ == "__main__":
     log_location = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
