@@ -1,7 +1,11 @@
 MVP Pattern
 ===========
 
-This section covers the classes used in the GUI for the USC-DR-RAWCOOKED project.
+Summary
+---------------
+The GUI follows the Model-View-Presenter(MVP) pattern to isolate the view from the underlying scripts.
+The modules are divided into `model`, `view` and `presenter` which contains separate classes.
+The following documentation explains the classes and methods used to build the GUI.
 
 Model Overview
 --------------
@@ -41,3 +45,6 @@ Here is a quick overview of the methods and special members defined in the `Prog
    :private-members:
    :special-members: __init__
    :show-inheritance:
+
+View Overview
+-------------

@@ -438,16 +438,6 @@ def sequence_count(sequence_path: Path) -> int:
     return n
 
 
-def read_new_content(file, file_position):
-    """Reads new lines from the file since the last read position."""
-    if not file:
-        return "", file_position
-
-    file.seek(file_position)  # Start from the last position
-    new_content = file.read()  # Read any new content
-    file_position = file.tell()  # Update position for the next read
-    return new_content, file_position
-
 if __name__ == "__main__":
     log_location = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
     print(log_location)
