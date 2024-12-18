@@ -39,6 +39,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SousChef
-        path: dist/app # Path to the generated executable in the dist folder
+        path: dist/SousChef # Path to the generated executable in the dist folder
 
 
