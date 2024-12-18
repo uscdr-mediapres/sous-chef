@@ -4,8 +4,14 @@ import os
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
-def read_new_content(file, file_position):
-    """Reads new lines from the file since the last read position."""
+def tail_new_content(file, file_position):
+    """
+    Reads new lines from the file since the last read position.
+
+    :param file: The file object to read from.
+    :param file_position: The position in the file to start reading from.
+    :return: A tuple containing the new content and the updated file position.
+    """
     if not file:
         return "", file_position
 
@@ -17,9 +23,10 @@ def read_new_content(file, file_position):
 
 def split_message(message: str) -> dict:
     """
-    components in order: (timestamp, function, pid, level, message)
-    :param message: str log message
-    :return: tuple containing components of message
+    Splits a log message into its components.
+
+    :param message: The log message as a string.
+    :return: A dictionary containing components of the log message.
     """
     pattern: str = (
         r"(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[(?P<function>[^\]]+)\]:(?P<process_id>\d+) ("
@@ -41,6 +48,12 @@ def split_message(message: str) -> dict:
 
 
 def search_analysis(message: str) -> (str, float):
+    """
+    Searches for analysis progress in a log message.
+
+    :param message: The log message as a string.
+    :return: A tuple with the description and progress percentage, or an empty tuple.
+    """
     pattern = r"Analyzing files \((\d+(\.\d+)?)%\)"
     match = re.search(pattern, message)
 
@@ -52,6 +65,12 @@ def search_analysis(message: str) -> (str, float):
 
 
 def search_rawcooked(message: str) -> (str, float):
+    """
+    Searches for RAWCooked frame processing information.
+
+    :param message: The log message as a string.
+    :return: A tuple with the description and frame number, or an empty tuple.
+    """
     pattern = r"frame=\s*(\d+).*bitrate=([\d.]+)kbits/s"
     match = re.search(pattern, message)
 
@@ -64,6 +83,12 @@ def search_rawcooked(message: str) -> (str, float):
 
 
 def search_reversibility(message: str) -> (str, float):
+    """
+    Searches for reversibility check progress in a log message.
+
+    :param message: The log message as a string.
+    :return: A tuple with the description and progress percentage, or an empty tuple.
+    """
     pattern = r"\bTime=\d{2}:\d{2}:\d{2} \((\d+(\.\d+)?)%\)"
     match = re.search(pattern, message)
 
@@ -75,6 +100,12 @@ def search_reversibility(message: str) -> (str, float):
 
 
 def get_sequence_length(message: str) -> (str, float):
+    """
+    Extracts the sequence length from a log message.
+
+    :param message: The log message as a string.
+    :return: A tuple with the description and sequence length, or an empty tuple.
+    """
     match = re.search(r'sequence length:\s*(\d+)', message)
     if match:
         sequence_length = int(match.group(1))
@@ -85,6 +116,13 @@ def get_sequence_length(message: str) -> (str, float):
 
 
 def parse_debug(message: str) -> (str, float):
+    """
+    Parses the log message for specific debug information such as analysis percentage, frames processed, or reversibility checks.
+
+    :param message: A log message string.
+    :return: A tuple containing a label and a value (e.g., progress percentage or frame count),
+             or a default tuple ("-", 0.0) if no patterns match.
+    """
     result = (
             search_analysis(message)
             or search_rawcooked(message)
@@ -96,6 +134,13 @@ def parse_debug(message: str) -> (str, float):
 
 
 def get_section_status(section):
+    """
+    Maps a section identifier to its corresponding status description.
+
+    :param section: The section identifier as a string (e.g., "---starting setup---").
+    :return: A human-readable status description corresponding to the section identifier.
+            If the section is not recognized, the original section identifier is returned.
+    """
     section = section.strip()
     status = {
         "---starting setup---": "Running Setup",
@@ -116,9 +161,20 @@ def get_section_status(section):
 
 
 class ProgressBarModel(QObject):
+    """
+    Manages the progress bar's state based on log file updates.
+    """
     progress_error = pyqtSignal(str, int)
+    """
+    :signal progress_error: Emitted when an error occurs, with a message and code.
+    """
 
     def __init__(self, filepath):
+        """
+        Initializes the ProgressBarModel.
+
+        :param filepath: Path to the log file being monitored.
+        """
         super().__init__()
         self.component = {}
         self.filepath = filepath
@@ -136,6 +192,11 @@ class ProgressBarModel(QObject):
         self.total_frames = 0
 
     def open_file(self, start_from_end=False):
+        """
+        Opens the log file for reading.
+
+        :param start_from_end: Whether to start reading from the end of the file.
+        """
         if self.filepath:
             self.file = open(self.filepath, 'r')
             if start_from_end:
@@ -146,21 +207,34 @@ class ProgressBarModel(QObject):
                 self.file_position = 0
 
     def read_new_content(self):
-        """Reads new lines from the log file using the utility function."""
+        """
+        Reads new lines from the log file.
+
+        :return: The new content read from the file.
+        """
         if not self.file:
             self.progress_error.emit("Error: Debug Log File Not Found", 100)
             return ""
 
-        new_content, self.file_position = read_new_content(self.file, self.file_position)
+        new_content, self.file_position = tail_new_content(self.file, self.file_position)
         return new_content
 
     def close_file(self):
-        """Closes the log file."""
+        """
+        Closes the log file.
+        """
         if self.file:
             self.file.close()
             self.file = None
 
     def get_report(self, component: dict, report: dict) -> dict:
+        """
+        Updates the progress report based on the parsed log component.
+
+        :param component: The parsed log component.
+        :param report: The current progress report.
+        :return: The updated progress report.
+        """
         try:
             section: str = component["message"]["INFO"]
             if "sequence length" in section:
@@ -178,10 +252,11 @@ class ProgressBarModel(QObject):
 
     def get_component(self, message: str, report: dict) -> (dict, dict):
         """
-        component keys: (timestamp, function, pid, level, message)
-        :param message: str log message
-        :param report: running reports as a dictionary
-        :return: components of message with parsed result
+        Parses a log message and updates the progress report.
+
+        :param message: The log message as a string.
+        :param report: The current progress report as a dictionary.
+        :return: A tuple containing the parsed log component and the updated report.
         """
         component = split_message(message + " ")  # space to account for empty logs
         if not component:
@@ -196,7 +271,13 @@ class ProgressBarModel(QObject):
         return component, report
 
     def read_component(self, line, report: dict = None) -> dict:
-        """Processes new log content line by line and updates the report."""
+        """
+        Processes a log line and updates the report.
+
+        :param line: A line from the log file.
+        :param report: The current progress report as a dictionary (optional).
+        :return: An updated progress report or status dictionary.
+        """
         report = (
             {"section": "", "progress": {"name": "", "value": 0}}
             if report is None
@@ -216,7 +297,12 @@ class ProgressBarModel(QObject):
         return component
 
     def fetch_data(self, line):
-        """Fetches component data and updates state based on the latest data."""
+        """
+        Updates the model's state based on new log file data.
+
+        :param line: A line from the log file.
+        :return: A dictionary representing the progress and state of the process.
+        """
         if not self.file:
             return {"section": "ERROR", "progress": {"name": "File Not Open", "value": 0}}
 
