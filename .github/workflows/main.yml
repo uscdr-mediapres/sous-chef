@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # or 'windows-latest' if you need a Windows executable
+    runs-on: ubuntu-20.04  # or 'windows-latest' if you need a Windows executable
     
     steps:
     - name: Checkout repository
