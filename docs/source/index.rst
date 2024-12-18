@@ -36,7 +36,7 @@ This tool is ideal for audiovisual archivists, film preservationists, and anyone
    - features
    - quickstart
    - installation guide
-   - gui breakdown
+   - mvp breakdown
    - licenses
    - contact
 
@@ -50,7 +50,7 @@ Index
 
 .. toctree::
    quickstart
-   gui_breakdown
+   mvp_breakdown
    functions
    contact
 
