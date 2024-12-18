@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import time
 
@@ -275,6 +276,20 @@ class Model:
         if not os.path.exists(self.backend_config_folder):
             os.mkdir(self.backend_config_folder)
 
+    def get_execution_dir(self):
+        """
+        Returns the execution directory of where the output is being written
+        """
+        with open(self.log_config_file, "r") as json_file:
+            log_configs = json.load(json_file)
+        log_path = log_configs["output"]["workers"]
+        print(log_path)
+        match = re.search(r'/execution[^/]+', log_path)
+
+        if match:
+            folder_name = match.group(0)
+            return folder_name.strip('/')
+
     def cancel(self):
         """
         Cancels the backend process by terminating it and ensuring all processes with
@@ -287,11 +302,14 @@ class Model:
             except subprocess.TimeoutExpired:
                 print("Force killing backend process...")
                 self.process.kill()
-
+        exec_dir = self.get_execution_dir()
         for proc in psutil.process_iter():
             try:
                 cmdline = proc.cmdline()
                 if cmdline and any("driver.py" in arg for arg in cmdline):
+                    print(f"Killing process {proc.pid} with command line: {cmdline}")
+                    proc.kill()
+                elif cmdline and any(exec_dir in arg for arg in cmdline):
                     print(f"Killing process {proc.pid} with command line: {cmdline}")
                     proc.kill()
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
