@@ -199,11 +199,11 @@ def move_logs(wd: Path, output_path: Path, sequence_destination: Path) -> None:
 
 
 def write_log_config(
-    write_path: Path,
-    driver_path: Path,
-    final_path: Path,
-    count: int,
-    sequence_paths: List[Path],
+        write_path: Path,
+        driver_path: Path,
+        final_path: Path,
+        count: int,
+        sequence_paths: List[Path],
 ) -> None:
     """
     Creates a JSON file containing log paths to be read by the GUI.

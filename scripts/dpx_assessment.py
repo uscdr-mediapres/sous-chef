@@ -26,21 +26,18 @@ def check_v2(sequence_path: Path, rc_license: str) -> bool:
 
     try:
         # rawcooked parameters
-        command: List[str] = [
-            "rawcooked",
-            "--license",
-            rc_license,
-            "--check",
-            "--no-encode",
-            str(sequence_path),
-        ]
+        command: List[str] = (
+                ["rawcooked"] +
+                [[], ["--license", rc_license]][rc_license is not None] +
+                ["--check", "--no-encode", str(sequence_path)])
+
         worker.debug(f"running subprocess {command=}")
         fail: bool = False
         error_message: str = "Error: the reversibility file is becoming big"
 
         #  subprocess call
         with subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         ) as p:
             for line in p.stderr:
                 worker.debug(line)
