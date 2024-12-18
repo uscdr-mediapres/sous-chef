@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 
 
-class PreferencesDialog(QDialog):
+class PreferencesView(QDialog):
     change_policy_clicked = pyqtSignal(str, str)
     edit_license_clicked = pyqtSignal(str, bool)
     cpu_cores_changed = pyqtSignal(int)

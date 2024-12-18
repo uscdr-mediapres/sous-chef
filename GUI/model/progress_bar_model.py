@@ -162,11 +162,31 @@ def get_section_status(section):
 
 class ProgressBarModel(QObject):
     """
-    Manages the progress bar's state based on log file updates.
+    A model to update progress bar's state based on log file updates.
+
+    Attributes
+    ----------
+    component: dict
+        Tracks the current log components being read
+    filepath: str
+        Path to the debug log file
+    progress_value: float
+        Current progress value of the progress bar
+    file: file object or None
+        The open file object for the log file, or None if no file is open.
+    file_position: int
+        Tracks the position in the file for reading new content.
+    total_frames:int
+        Total number of frames being processed for this sequence
+
+    Signals
+    -------
+    log_error(str)
+        Emitted when an error occurs (e.g., file not found).
     """
     progress_error = pyqtSignal(str, int)
     """
-    :signal progress_error: Emitted when an error occurs, with a message and code.
+    :signal progress_error: Emitted when an error occurs, with a message and value.
     """
 
     def __init__(self, filepath):

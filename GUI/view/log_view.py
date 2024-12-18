@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTextEdit, QFileD
 from PyQt5.QtGui import QTextCursor
 
 
-class LogWidget(QWidget):
+class LogView(QWidget):
     def __init__(self, filename, parent=None):
         super().__init__(parent)
         # Text edit to display log contents

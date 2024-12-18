@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QTableWidget, QHeaderView, QLabel, QCheckBox, QWidge
 from pathlib import Path
 
 
-class FolderTableWidget(QTableWidget):
+class FolderTableView(QTableWidget):
 
     def __init__(self, parent=None):
-        super(FolderTableWidget, self).__init__(parent)
+        super(FolderTableView, self).__init__(parent)
         self.default_dpx_policy = None
         self.default_mkv_policy = None
 

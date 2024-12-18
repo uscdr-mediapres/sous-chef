@@ -6,7 +6,7 @@
 USC-DR-RAWCOOKED
 ============================================
 
-This is a Python GUI that can be used to archive large DPX sequences
+This is a Python GUI that can be used to losslessly compress large DPX sequences
 using `RAWcooked <https://mediaarea.net/RAWcooked>`_ and
 `FFMPEG <https://www.ffmpeg.org/>`_.
 

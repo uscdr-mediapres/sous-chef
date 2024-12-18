@@ -1,14 +1,14 @@
 import os.path
 
-from GUI.view.license_view import AboutWindow
+from GUI.view.about_view import AboutView
 from GUI.model.log_model import LogModel
-from GUI.view.log_view import LogWidget
+from GUI.view.log_view import LogView
 from GUI.presenter.log_presenter import LogPresenter
 from GUI.presenter.preferences_presenter import PreferencesPresenter
 from GUI.model.progress_bar_model import ProgressBarModel
 from GUI.view.progress_bar_view import ProgressBarView
 from GUI.presenter.progress_bar_presenter import ProgressPresenter
-from GUI.view.preferences_dialog import PreferencesDialog
+from GUI.view.preferences_view import PreferencesView
 
 
 class Presenter:
@@ -37,14 +37,15 @@ class Presenter:
         self.license_version = self.model.get_license_config()
         self.current_cpu_cores = self.model.get_cpu_cores()
         if action == "About Clicked":
-            self.about_window = AboutWindow("RAWCooked USC DR")
+            self.about_window = AboutView("Sous Chef\n USC DR: Nicholas Camardo, Trinanjan Nandi, Rajat Shrivastava, "
+                                          "Shalini Sai Prasad\n")
             self.about_window.exec_()
         elif action == "Preferences Clicked":
-            self.preferences_window = PreferencesDialog(self.folder_table.default_dpx_policy,
-                                                        self.folder_table.default_mkv_policy,
-                                                        os.cpu_count(),
-                                                        self.current_cpu_cores,
-                                                        self.license_version)
+            self.preferences_window = PreferencesView(self.folder_table.default_dpx_policy,
+                                                      self.folder_table.default_mkv_policy,
+                                                      os.cpu_count(),
+                                                      self.current_cpu_cores,
+                                                      self.license_version)
             self.preferences_presenter = PreferencesPresenter(self.preferences_window, self.model)
             self.preferences_window.show()
 
@@ -62,7 +63,7 @@ class Presenter:
                 self.model.create_worker_config(row_index, row_data)
 
     def start_log_widget(self, seq_file_name, log_file_name):
-        log_view = LogWidget(seq_file_name)
+        log_view = LogView(seq_file_name)
         log_model = LogModel(log_file_name)
         log_presenter = LogPresenter(log_model, log_view)
         self.log_presenters.append(log_presenter)

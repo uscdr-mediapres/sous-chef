@@ -20,7 +20,7 @@ class LogModel(QObject):
     Attributes
     ----------
     filepath : str
-        Path to the log file.
+        Path to the info log file.
     file : file object or None
         The open file object for the log file, or None if no file is open.
     file_position : int
@@ -33,6 +33,9 @@ class LogModel(QObject):
     """
 
     log_error = pyqtSignal(str)
+    """
+    :signal log_error: Emitted when an error occurs, with a message.
+    """
 
     def __init__(self, filepath=None):
         """

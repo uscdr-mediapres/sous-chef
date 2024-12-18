@@ -11,9 +11,12 @@ import sys
 current_directory = os.path.abspath(__file__)
 parent_directory = os.path.dirname(os.path.dirname(os.path.dirname(current_directory)))
 scripts_directory = os.path.join(parent_directory, "scripts")
-gui_directory = os.path.join(parent_directory, "GUI")
+# gui_model_directory = os.path.join(parent_directory, "GUI/model")
+# gui_view_directory = os.path.join(parent_directory, "GUI/view")
+sys.path.insert(0, parent_directory)
 sys.path.insert(0, scripts_directory)
-sys.path.insert(0, gui_directory)
+# sys.path.insert(0, gui_model_directory)
+# sys.path.insert(0, gui_view_directory)
 
 project = "USC-DR-RAWCOOKED"
 copyright = "2024, Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
