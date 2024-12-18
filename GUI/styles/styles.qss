@@ -1,0 +1,44 @@
+QStatusBar {
+    background-color: #f0f0f0; /* Light gray background */
+    border-top: 1px solid #a0a0a0; /* Top border for clear separation */
+    padding: 5px; /* Add some padding for better spacing */
+}
+
+QLabel#OutputFolderLabel {
+    border: 1px solid #a0a0a0;           /* Border thickness and color */
+}
+
+QTableWidget::item {
+                border-left:  none;/* Left border for items */
+                border-right: none; /* Right border for items */
+                border-top: none;  /* No top border */
+                border-bottom: none; /* No bottom border */
+            }
+            QHeaderView::section {
+                border-bottom: 1px solid #a0a0a0; /* No bottom border */
+                border-right: 1px solid #a0a0a0; /* Left border for Header */
+                border-top: none;  /* No top border */
+
+            }
+
+QProgressBar {
+                border: 2px solid #5a5a5a;
+                border-radius: 10px;
+                background: #e0e0e0;
+                text-align: center;
+            }
+
+QProgressBar::chunk {
+    background: #4CAF50;
+    border-radius: 10px;
+}
+
+/* Error style for progress bar */
+QProgressBar.error {
+    border: 1px solid gray;
+}
+
+QProgressBar.error::chunk {
+    background-color: red; /* Red for error state */
+    border-radius: 10px;
+}

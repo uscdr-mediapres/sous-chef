@@ -1,0 +1,9 @@
+*.venv
+*.idea
+config/*
+logs/*
+*.pyc
+*~
+*.swp
+docs/build
+*.json

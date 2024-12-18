@@ -1,0 +1,13 @@
+Markdown==3.6
+mediaconch==22.3
+packaging==24.0
+psutil==6.1.0
+pymediainfo==6.0.1
+PyQt5==5.15.10
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.13.0
+PyQt5-stubs==5.15.6.0
+python-dotenv==1.0.0
+QtPy==2.4.1
+qtwidgets==1.1
+zipp==3.19.1
