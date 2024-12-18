@@ -152,14 +152,16 @@ def worker_process(params: dict, q: Queue) -> Queue:
 
     try:
         utils.move(sequence_parent, sequence_destination)
-        utils.copy(
-            Path(sequence_config["dpx_policy_path"]),
-            (wd / "policies" / "dpx_policy.xml"),
-        )
-        utils.copy(
-            Path(sequence_config["mkv_policy_path"]),
-            (wd / "policies" / "mkv_policy.xml"),
-        )
+        if sequence_config["dpx_policy_check"]:
+            utils.copy(
+                Path(sequence_config["dpx_policy_path"]),
+                (wd / "policies" / "dpx_policy.xml"),
+            )
+        if sequence_config["mkv_policy_check"]:
+            utils.copy(
+                Path(sequence_config["mkv_policy_path"]),
+                (wd / "policies" / "mkv_policy.xml"),
+            )
     except RuntimeError as e:
         worker.error(f"halting process due to move/copy failure: {e}")
         q.put((current_process, False, "failure during move/copy"))
