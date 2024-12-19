@@ -18,10 +18,10 @@ sys.path.insert(0, scripts_directory)
 # sys.path.insert(0, gui_model_directory)
 # sys.path.insert(0, gui_view_directory)
 
-project = "USC-DR-RAWCOOKED"
-copyright = "2024, Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
-author = "Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
-release = "0.1"
+project = "SousChef"
+copyright = "2024, Nicholas Camardo, Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
+author = "Nicholas Camardo, Shalini Sai Prasad, Rajat Shrivastava, Trinanjan Nandi"
+release = "0.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
