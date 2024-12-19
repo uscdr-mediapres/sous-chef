@@ -37,8 +37,8 @@ class Presenter:
         self.license_version = self.model.get_license_config()
         self.current_cpu_cores = self.model.get_cpu_cores()
         if action == "About Clicked":
-            self.about_window = AboutView("Sous Chef\n USC DR: Nicholas Camardo, Trinanjan Nandi, Rajat Shrivastava, "
-                                          "Shalini Sai Prasad\n")
+            self.about_window = AboutView("Sous Chef\n "
+                                          "For troubleshooting please reach out to uscdr.mediapres@gmail.com")
             self.about_window.exec_()
         elif action == "Preferences Clicked":
             self.preferences_window = PreferencesView(self.folder_table.default_dpx_policy,
@@ -81,6 +81,9 @@ class Presenter:
 
     def on_progress_bar_ended(self, file_path):
         self.folder_table.delete_row_by_name(file_path)
+        if self.folder_table.rowCount() == 0:
+            self.view.run_button.setEnabled(True)
+            self.view.cancel_button.setEnabled(False)
 
     def run_backend(self):
         if self.view.check_valid_output_folder(self.view.get_output_folder()):
