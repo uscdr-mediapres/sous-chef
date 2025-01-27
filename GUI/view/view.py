@@ -68,7 +68,7 @@ def create_button_layout(*buttons, alignment=None):
 
 class View(QMainWindow):
     """
-     Main window class for the RawCooked USC DR application.
+     Main window class for the SousChef application.
 
      :param project_root: The root directory of the project.
      :type project_root: str
@@ -89,7 +89,7 @@ class View(QMainWindow):
         self.project_root = project_root
 
         self.load_styles()
-        self.setWindowTitle("RawCooked USC DR")
+        self.setWindowTitle("SousChef")
         self.resize(500, 350)
         self.center()
 
