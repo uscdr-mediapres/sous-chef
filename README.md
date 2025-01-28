@@ -19,7 +19,7 @@ SousChef is currently only available on Linux systems, and was built on Ubuntu-2
 
 ### Installation
 
-Choose the latest tag on the GitHub page (currently `v0.2`) and go to the `Releases` section. Click on SousChef under
+Choose the latest tag on the GitHub page (currently `v0.3`) and go to the `Releases` section. Click on SousChef under
 the Assets section to download the application. The source code is also available in this section but not required to
 run the program. 
 
